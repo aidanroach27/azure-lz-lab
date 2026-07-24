@@ -14,23 +14,22 @@ provider "azurerm" {
 
 resource "azurerm_resource_group" "lab" {
   name     = "rg-lz-lab"
-  location = "eastus2"
+  location = var.location
 }
 
 resource "azurerm_virtual_network" "lab" {
   name                = "virtual_network1"
   location            = azurerm_resource_group.lab.location
   resource_group_name = azurerm_resource_group.lab.name
-  address_space       = ["10.0.0.0/16"]
+  address_space       = var.address_space
 }
 
 resource "azurerm_subnet" "lab" {
   name                 = "subnet1"
   resource_group_name  = azurerm_resource_group.lab.name
   virtual_network_name = azurerm_virtual_network.lab.name
-  address_prefixes     = ["10.0.1.0/24"]
+  address_prefixes     = var.address_prefixes
 }
-
 
 resource "azurerm_network_security_group" "lab" {
   name                = "nsg1"
@@ -44,7 +43,7 @@ resource "azurerm_network_security_group" "lab" {
     access                     = "Allow"
     protocol                   = "Tcp"
     source_port_range          = "*"
-    destination_port_range     = 443
+    destination_port_range     = "443"
     source_address_prefix      = "Internet"
     destination_address_prefix = "*"
   }
