@@ -1,4 +1,4 @@
-terraform {
+﻿terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -8,9 +8,17 @@ terraform {
 }
 
 provider "azurerm" {
-  features {}
+  features {
+    key_vault {
+      purge_soft_delete_on_destroy    = true
+      recover_soft_deleted_key_vaults = true
+    }
+  }
   resource_provider_registrations = "none"
 }
+
+data "azurerm_client_config" "current" {}
+
 
 resource "azurerm_resource_group" "lab" {
   name     = "rg-lz-lab"
@@ -52,4 +60,18 @@ resource "azurerm_network_security_group" "lab" {
 resource "azurerm_subnet_network_security_group_association" "lab" {
   subnet_id                 = azurerm_subnet.lab.id
   network_security_group_id = azurerm_network_security_group.lab.id
+}
+
+resource "azurerm_key_vault" "lab" {
+  name                        = "boathugstheshore"
+  location                    = var.location
+  resource_group_name         = azurerm_resource_group.lab.name
+  rbac_authorization_enabled  = true
+  enabled_for_disk_encryption = false
+  tenant_id                   = data.azurerm_client_config.current.tenant_id
+  soft_delete_retention_days  = 7
+  purge_protection_enabled    = false
+
+  sku_name = "standard"
+
 }
