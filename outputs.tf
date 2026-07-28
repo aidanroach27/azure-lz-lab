@@ -1,7 +1,7 @@
 output "subnet_id" {
-  value = azurerm_subnet.lab.id
+  value = module.network.subnet_id
 }
 
 output "net_sec_group_id" {
-  value = azurerm_network_security_group.lab.id
+  value = module.network.net_sec_group_id
 }
