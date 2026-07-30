@@ -1,4 +1,4 @@
-terraform {
+﻿terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -18,7 +18,9 @@ provider "azurerm" {
 }
 
 data "azurerm_client_config" "current" {}
-
+data "azurerm_policy_definition" "lab" {
+  display_name = "Audit resource location matches resource group location"
+}
 
 resource "azurerm_resource_group" "lab" {
   name     = "rg-lz-lab"
@@ -48,3 +50,8 @@ module "network" {
   address_prefixes    = var.address_prefixes
 }
 
+resource "azurerm_resource_group_policy_assignment" "lab" {
+  name                 = "resource_policy"
+  resource_group_id    = azurerm_resource_group.lab.id
+  policy_definition_id = data.azurerm_policy_definition.lab.id
+}
