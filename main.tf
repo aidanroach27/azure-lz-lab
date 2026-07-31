@@ -14,7 +14,7 @@ provider "azurerm" {
       recover_soft_deleted_key_vaults = true
     }
   }
-  resource_provider_registrations = "none"
+  resource_provider_registrations = "core"
 }
 
 data "azurerm_client_config" "current" {}
@@ -54,4 +54,10 @@ resource "azurerm_resource_group_policy_assignment" "lab" {
   name                 = "resource_policy"
   resource_group_id    = azurerm_resource_group.lab.id
   policy_definition_id = data.azurerm_policy_definition.lab.id
+}
+
+resource "azurerm_security_center_subscription_pricing" "lab" {
+  tier          = "Standard"
+  resource_type = "KeyVaults"
+  subplan       = "PerKeyVault"
 }
