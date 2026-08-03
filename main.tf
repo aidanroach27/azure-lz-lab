@@ -1,4 +1,4 @@
-﻿terraform {
+terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -23,13 +23,13 @@ data "azurerm_policy_definition" "lab" {
 }
 
 resource "azurerm_resource_group" "lab" {
-  name     = "rg-lz-lab"
+  name     = var.resource_group_name
   location = var.location
 }
 
 
 resource "azurerm_key_vault" "lab" {
-  name                        = "boathugstheshore"
+  name                        = var.key_vault_name
   location                    = var.location
   resource_group_name         = azurerm_resource_group.lab.name
   rbac_authorization_enabled  = true
@@ -48,6 +48,7 @@ module "network" {
   location            = var.location
   address_space       = var.address_space
   address_prefixes    = var.address_prefixes
+  security_rules      = var.security_rules
 }
 
 resource "azurerm_resource_group_policy_assignment" "lab" {
